@@ -36,6 +36,7 @@ public class ViewLoader {
 
             primaryStage.setTitle(title);
             primaryStage.setScene(scene);
+            primaryStage.centerOnScreen(); // Always center the window
             primaryStage.show();
         } catch (IOException e) {
             System.err.println("Error loading view: " + fxmlPath);

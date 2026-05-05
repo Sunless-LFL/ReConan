@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.reconan.ui.ViewLoader;
 
 /**
  * Controller for the SplashScreen view.
@@ -40,8 +41,8 @@ public class SplashScreenController {
         // Combine and play animations
         ParallelTransition animation = new ParallelTransition(fade, scale);
         animation.setOnFinished(event -> {
-            // Future: Transition to main dashboard
-            System.out.println("Splash animation finished.");
+            // Transition to main menu
+            ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
         });
         animation.play();
     }
