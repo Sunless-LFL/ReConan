@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/main/resources/icon.png" alt="ReConan Logo" width="200"/>
+  <img src="src/main/resources/images/icon.png" alt="ReConan Logo" width="200"/>
 </p>
 
 <h1 align="center">ReConan</h1>
