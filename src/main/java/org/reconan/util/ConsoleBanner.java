@@ -1,9 +1,10 @@
-package org.reconan.ui;
+package org.reconan.util;
 
 /**
- * Displays the application banner in the console.
+ * Utility for displaying application branding in the console.
  */
-public class Banner {
+public class ConsoleBanner {
+    
     // Print styled banner text to console
     public static void print() {
         System.out.println("\u001B[38;2;178;34;34m---------------------------------------------------------");

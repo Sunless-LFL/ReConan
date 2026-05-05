@@ -3,33 +3,36 @@ package org.reconan;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.reconan.ui.Banner;
-import org.reconan.ui.SplashScreen;
+import org.reconan.ui.ViewLoader;
+import org.reconan.util.ConsoleBanner;
 import org.reconan.database.DatabaseConnection;
 
 /**
  * Main entry point of the application.
  */
 public class Main extends Application {
+
     @Override
     public void start(Stage stage) {
+        // Initialize ViewLoader
+        ViewLoader.setPrimaryStage(stage);
+        
         // Configure stage properties
         setupStage(stage);
 
         // Print console banner
-        Banner.print();
+        ConsoleBanner.print();
 
         // Verify database connection
         DatabaseConnection.checkConnection();
 
-        // Display splash screen
-        SplashScreen.show(stage);
+        // Load splash screen view
+        ViewLoader.loadView("/fxml/splash_screen.fxml", "ReConan - Loading");
     }
 
     // Set window title and icon
     private void setupStage(Stage stage) {
-        stage.setTitle("ReConan");
-        stage.getIcons().add(new Image(Main.class.getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
     }
 
     // Launch JavaFX application

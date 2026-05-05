@@ -1,0 +1,14 @@
+/* Global Application Styles */
+.root {
+    -fx-font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -fx-background-color: #0f0f0f;
+}
+
+/* Splash Screen Styles */
+.splash-root {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1a1a1a, #0a0a0a);
+}
+
+.logo-view {
+    -fx-effect: dropshadow(three-pass-box, rgba(178, 34, 34, 0.4), 20, 0, 0, 0);
+}
