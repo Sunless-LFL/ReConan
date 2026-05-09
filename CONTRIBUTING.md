@@ -16,22 +16,8 @@ First off, thank you for considering contributing to ReConan! It's people like y
 
 ## Development Environment Setup
 
-### Prerequisites
-Before you begin, ensure you have the following installed:
-- **Java Development Kit (JDK) 17+** (or whichever version the project uses, though recent JavaFX projects typically use 17+).
-- **Maven 3.6+** for dependency management and building.
-- A running instance of **SQL Server**.
-- **SQL Server Configuration**:
-  1. **Enable TCP/IP**: Open *SQL Server Configuration Manager*, go to *SQL Server Network Configuration* > *Protocols for MSSQLSERVER*, and set **TCP/IP** to **Enabled**.
-  2. **Configure Port**: In *TCP/IP Properties* > *IP Addresses* tab, scroll to **IP All** and set **TCP Port** to `1433`.
-  3. **Restart Service**: Restart the *SQL Server (MSSQLSERVER)* service.
-  4. **Create Database**: Open *SQL Server Management Studio (SSMS)* or any SQL tool and run:
-     ```sql
-     CREATE DATABASE ReConan;
-     ```
-
 ### Environment Variables
-You will need to set up your environment variables for the database connection and other configurations.
+You will need to set up your environment variables for the database connection and other configurations **before** starting the database.
 We provide an example configuration file named `.env.example`. You should copy this file and rename it to `.env` in the root directory:
 
 #### On Linux/macOS
@@ -44,7 +30,33 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-Open the newly created `.env` file and replace the placeholder values with your actual database credentials. Ensure your `.env` is **never** committed to version control (it should be included in `.gitignore`).
+Open the newly created `.env` file and replace the placeholder values with your actual database credentials. Ensure your `.env` is **never** committed to version control.
+
+### SQL Server Setup
+Once your `.env` file is ready, you can set up SQL Server either natively or using Docker.
+
+#### Option 1: Native Installation
+1. **Enable TCP/IP**: Open *SQL Server Configuration Manager*, go to *SQL Server Network Configuration* > *Protocols for MSSQLSERVER*, and set **TCP/IP** to **Enabled**.
+2. **Configure Port**: In *TCP/IP Properties* > *IP Addresses* tab, scroll to **IP All** and set **TCP Port** to `1433`.
+3. **Restart Service**: Restart the *SQL Server (MSSQLSERVER)* service.
+4. **Create Database**: Open *SQL Server Management Studio (SSMS)* and run:
+   ```sql
+   CREATE DATABASE ReConan;
+   ```
+
+#### Option 2: Docker Setup
+1. **Start Container**: Ensure Docker is running and execute:
+   ```bash
+   docker-compose up -d
+   ```
+2. **Create Database**: Run the following command to create the `ReConan` database inside the container (replace `your_password` with the `DB_PASSWORD` you just set in `.env`):
+   ```bash
+   docker exec -it reconan-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P your_password -Q "CREATE DATABASE ReConan" -C
+   ```
+3. **Stop Container**: To stop the database when you're done:
+   ```bash
+   docker-compose down
+   ```
 
 ### Compilation and Running
 ReConan is built with Maven and JavaFX. You can compile and run the application locally with the following command:
