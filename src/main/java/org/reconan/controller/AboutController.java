@@ -19,11 +19,13 @@ public class AboutController {
 
     @FXML
     private void handleBack() {
+        System.out.println("Terminal: Returning to Main Menu...");
         ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
     }
 
     @FXML
     private void handleZoomImage(MouseEvent event) {
+        System.out.println("Terminal: Zooming image...");
         ImageView clickedImage = (ImageView) event.getSource();
         zoomedImage.setImage(clickedImage.getImage());
         zoomOverlay.setVisible(true);
@@ -31,6 +33,7 @@ public class AboutController {
 
     @FXML
     private void handleCloseZoom() {
+        System.out.println("Terminal: Closing zoomed image...");
         zoomOverlay.setVisible(false);
     }
 
@@ -45,7 +48,7 @@ public class AboutController {
     }
 
     private void openUrl(String url) {
-        System.out.println("Opening URL: " + url);
+        System.out.println("Terminal: Opening URL: " + url);
         try {
             if (java.awt.Desktop.isDesktopSupported()) {
                 java.awt.Desktop.getDesktop().browse(new java.net.URI(url));

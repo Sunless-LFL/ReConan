@@ -24,8 +24,20 @@ public class ViewLoader {
      * @param title Title for the stage.
      */
     public static void loadView(String fxmlPath, String title) {
+        loadViewWithController(fxmlPath, title);
+    }
+
+    /**
+     * Loads a view from FXML, sets it as the current scene, and returns the controller.
+     * @param fxmlPath Path to the FXML file relative to resources.
+     * @param title Title for the stage.
+     * @param <T> The type of the controller.
+     * @return The controller instance.
+     */
+    public static <T> T loadViewWithController(String fxmlPath, String title) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(ViewLoader.class.getResource(fxmlPath)));
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(ViewLoader.class.getResource(fxmlPath)));
+            Parent root = loader.load();
             Scene scene = new Scene(root);
             
             // Load global CSS
@@ -38,9 +50,12 @@ public class ViewLoader {
             primaryStage.setScene(scene);
             primaryStage.centerOnScreen(); // Always center the window
             primaryStage.show();
+            
+            return loader.getController();
         } catch (IOException e) {
             System.err.println("Error loading view: " + fxmlPath);
             e.printStackTrace();
+            return null;
         }
     }
 }

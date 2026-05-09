@@ -41,6 +41,7 @@ public class SplashScreenController {
         // Combine and play animations
         ParallelTransition animation = new ParallelTransition(fade, scale);
         animation.setOnFinished(event -> {
+            System.out.println("Terminal: Splash screen finished. Transitioning to Main Menu...");
             // Transition to main menu
             ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
         });

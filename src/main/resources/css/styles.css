@@ -168,3 +168,158 @@
     -fx-font-size: 14px;
     -fx-font-style: italic;
 }
+
+/* Workspace Styles */
+.workspace-root {
+    -fx-background-color: #0f0f0f;
+}
+
+.workspace-header {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1 0;
+}
+
+.workspace-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0f0f0;
+}
+
+.panel-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #b22222;
+}
+
+.graph-pane {
+    -fx-background-color: #151515;
+}
+
+.tool-bar {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tool-bar .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #a0a0a0;
+    -fx-cursor: hand;
+}
+
+.tool-bar .button:hover {
+    -fx-text-fill: #f0f0f0;
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.split-pane *.split-pane-divider {
+    -fx-background-color: #333333;
+}
+
+.list-view {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-radius: 3;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f0f0f0;
+    -fx-padding: 8 10;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #2a2a2a;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: #b22222;
+    -fx-text-fill: white;
+}
+
+/* Dialog Styles */
+.dialog-pane {
+    -fx-background-color: #1a1a1a;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #b22222;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: #f0f0f0;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: #444444;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: #b22222;
+    -fx-text-fill: #b22222;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: linear-gradient(to bottom right, #b22222, #8b0000);
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: linear-gradient(to bottom right, #cd2626, #a50000);
+}
+
+.text-field, .text-area {
+    -fx-background-color: #2a2a2a;
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #b22222;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+.text-area .viewport {
+    -fx-background-color: transparent;
+}
+
+.choice-box, .combo-box, .combo-box-base {
+    -fx-background-color: #2a2a2a;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+}
+
+.choice-box .label, .combo-box .list-cell {
+    -fx-text-fill: #f0f0f0;
+}
+
+.choice-box .mark, .combo-box .arrow {
+    -fx-background-color: #f0f0f0;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #444444;
+}
