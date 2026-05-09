@@ -21,6 +21,14 @@ Before you begin, ensure you have the following installed:
 - **Java Development Kit (JDK) 17+** (or whichever version the project uses, though recent JavaFX projects typically use 17+).
 - **Maven 3.6+** for dependency management and building.
 - A running instance of **SQL Server**.
+- **SQL Server Configuration**:
+  1. **Enable TCP/IP**: Open *SQL Server Configuration Manager*, go to *SQL Server Network Configuration* > *Protocols for MSSQLSERVER*, and set **TCP/IP** to **Enabled**.
+  2. **Configure Port**: In *TCP/IP Properties* > *IP Addresses* tab, scroll to **IP All** and set **TCP Port** to `1433`.
+  3. **Restart Service**: Restart the *SQL Server (MSSQLSERVER)* service.
+  4. **Create Database**: Open *SQL Server Management Studio (SSMS)* or any SQL tool and run:
+     ```sql
+     CREATE DATABASE ReConan;
+     ```
 
 ### Environment Variables
 You will need to set up your environment variables for the database connection and other configurations.

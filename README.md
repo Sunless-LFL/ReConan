@@ -21,12 +21,10 @@ ReConan is designed for **digital reconnaissance and relationship analysis**. In
 ## Technologies Used
 - **Language**: Java
 - **User Interface**: JavaFX
+- **Graph Visualization**: JavaFX SmartGraph
 - **Database**: SQL Server
 - **Data Access**: JDBC
-- **JSON Parsing**: Jackson / Gson
-- **Graph Modeling**: JGraphT
-- **Networking**: Java HTTP Client
-- **Packaging**: jpackage
+- **Build Tool**: Maven
 
 ## Architecture
 ReConan follows a modular, **layered architecture**:
