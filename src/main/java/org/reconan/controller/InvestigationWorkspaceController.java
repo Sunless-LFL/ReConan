@@ -1,14 +1,20 @@
 package org.reconan.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.control.Dialog;
 import org.reconan.graph.GraphManager;
 import org.reconan.model.Entity;
 import org.reconan.model.EntityType;
@@ -33,7 +39,12 @@ public class InvestigationWorkspaceController {
     private StackPane graphPane;
 
     @FXML
-    private ListView<String> propertiesList;
+    private VBox detailsContainer;
+
+    @FXML
+    private VBox actionPanel;
+
+    private Entity selectedEntity;
 
     private Investigation currentInvestigation;
     private GraphManager graphManager;
@@ -55,6 +66,10 @@ public class InvestigationWorkspaceController {
 
         // Setup Drag and Drop
         setupDragAndDrop();
+        
+        // Hide action panel initially
+        actionPanel.setVisible(false);
+        actionPanel.setManaged(false);
     }
 
     private void setupDragAndDrop() {
@@ -112,6 +127,7 @@ public class InvestigationWorkspaceController {
             dialog.setTitle("New " + type.getLabel());
             dialog.setHeaderText("Enter value for " + type.getLabel());
             dialog.setContentText("Value:");
+            styleDialog(dialog);
 
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent() && !result.get().trim().isEmpty()) {
@@ -139,15 +155,73 @@ public class InvestigationWorkspaceController {
     }
 
     private void handleEntitySelection(Entity entity) {
+        this.selectedEntity = entity;
         System.out.println("Terminal: Entity selected: " + entity.getValue());
-        propertiesList.getItems().clear();
-        propertiesList.getItems().add("Type: " + entity.getType().getLabel());
-        propertiesList.getItems().add("Value: " + entity.getValue());
-        propertiesList.getItems().add("ID: " + entity.getId());
+        
+        detailsContainer.getChildren().clear();
+        
+        // Show action panel
+        actionPanel.setVisible(true);
+        actionPanel.setManaged(true);
+        
+        addDetailLabel("Type", entity.getType().getLabel());
+        addDetailLabel("Value", entity.getValue());
+        addDetailLabel("ID", String.valueOf(entity.getId()));
+        
+        entity.getProperties().forEach(this::addDetailLabel);
+    }
 
-        entity.getProperties().forEach((k, v) -> {
-            propertiesList.getItems().add(k + ": " + v);
+    private void addDetailLabel(String key, String value) {
+        Label keyLabel = new Label(key + ":");
+        keyLabel.getStyleClass().add("property-key");
+        
+        Label valueLabel = new Label(value);
+        valueLabel.getStyleClass().add("property-value");
+        valueLabel.setWrapText(true);
+        
+        VBox pair = new VBox(keyLabel, valueLabel);
+        pair.setSpacing(2);
+        detailsContainer.getChildren().add(pair);
+    }
+
+    @FXML
+    private void handleUpdateEntity() {
+        if (selectedEntity == null) return;
+
+        TextInputDialog dialog = new TextInputDialog(selectedEntity.getValue());
+        dialog.setTitle("Update Entity");
+        dialog.setHeaderText("Update value for " + selectedEntity.getType().getLabel());
+        dialog.setContentText("New Value:");
+        styleDialog(dialog);
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newValue -> {
+            if (!newValue.trim().isEmpty()) {
+                selectedEntity.setValue(newValue);
+                graphManager.updateEntity(selectedEntity);
+                handleEntitySelection(selectedEntity); // Refresh sidebar
+            }
         });
+    }
+
+    @FXML
+    private void handleDeleteEntity() {
+        if (selectedEntity == null) return;
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Entity");
+        alert.setHeaderText("Are you sure you want to delete this entity?");
+        alert.setContentText("This action cannot be undone.");
+        styleDialog(alert);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            graphManager.removeEntity(selectedEntity);
+            detailsContainer.getChildren().clear();
+            actionPanel.setVisible(false);
+            actionPanel.setManaged(false);
+            selectedEntity = null;
+        }
     }
 
     /**
@@ -177,5 +251,21 @@ public class InvestigationWorkspaceController {
     private void handleBackToMenu() {
         System.out.println("Terminal: Returning to Main Menu from Workspace...");
         ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
+    }
+
+    private void styleDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Terminal: Could not load styles.css for dialog.");
+        }
+        dialog.getDialogPane().getStyleClass().add("dialog-pane");
+        
+        try {
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
+        } catch (Exception e) {
+            System.err.println("Terminal: Could not load icon for dialog.");
+        }
     }
 }

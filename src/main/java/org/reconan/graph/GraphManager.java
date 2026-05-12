@@ -181,6 +181,32 @@ public class GraphManager {
     }
 
     /**
+     * Removes an entity from the graph.
+     *
+     * @param entity The entity to remove.
+     */
+    public void removeEntity(Entity entity) {
+        Vertex<Entity> vertex = vertexMap.get(entity.getId());
+        if (vertex != null) {
+            graph.removeVertex(vertex);
+            entityMap.remove(entity.getId());
+            vertexMap.remove(entity.getId());
+            updateView();
+        }
+    }
+
+    /**
+     * Updates an entity's visual state on the graph.
+     *
+     * @param entity The updated entity.
+     */
+    public void updateEntity(Entity entity) {
+        // SmartGraph labels are usually bound to the toString() or a provider.
+        // We just need to trigger an update.
+        updateView();
+    }
+
+    /**
      * Sets a listener for node selection events.
      *
      * @param onSelect Callback when an entity is selected.

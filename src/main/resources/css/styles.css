@@ -346,3 +346,48 @@
     -fx-border-color: #b22222;
     -fx-text-fill: white;
 }
+
+/* Details Panel Styles */
+.details-panel {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 0 1;
+}
+
+.properties-container {
+    -fx-padding: 10 0;
+}
+
+.property-key {
+    -fx-text-fill: #b22222;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+.property-value {
+    -fx-text-fill: #f0f0f0;
+    -fx-font-size: 14px;
+    -fx-padding: 0 0 10 0;
+}
+
+.action-panel {
+    -fx-padding: 15 0 0 0;
+    -fx-border-color: #333333;
+    -fx-border-width: 1 0 0 0;
+}
+
+.action-button-delete {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ff4444;
+    -fx-border-color: #ff4444;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-font-size: 14px;
+    -fx-padding: 12 30;
+    -fx-cursor: hand;
+}
+
+.action-button-delete:hover {
+    -fx-background-color: rgba(255, 68, 68, 0.1);
+}
