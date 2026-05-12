@@ -12,28 +12,18 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="768.0" prefWidth="1024.0" styleClass="workspace-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.reconan.controller.InvestigationWorkspaceController">
-   <top>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="workspace-header" VBox.vgrow="NEVER">
-               <children>
-                  <Label fx:id="investigationNameLabel" styleClass="workspace-title" text="Investigation: Untitled" />
-                  <Pane HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#handleBackToMenu" styleClass="action-button-secondary" text="Back to Menu" />
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-               </padding>
-            </HBox>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button mnemonicParsing="false" text="Run Transform" />
-                  <Button mnemonicParsing="false" text="Clear Graph" />
-              </items>
-            </ToolBar>
-         </children>
-      </VBox>
-   </top>
+    <top>
+       <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="workspace-header" BorderPane.alignment="CENTER">
+          <children>
+             <Label fx:id="investigationNameLabel" styleClass="workspace-title" text="Investigation: Untitled" />
+             <Pane HBox.hgrow="ALWAYS" />
+             <Button mnemonicParsing="false" onAction="#handleBackToMenu" styleClass="action-button-secondary" text="Back to Menu" />
+          </children>
+          <padding>
+             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+          </padding>
+       </HBox>
+    </top>
    <center>
       <SplitPane dividerPositions="0.2, 0.8" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
@@ -49,7 +39,7 @@
             <Pane fx:id="graphPane" prefHeight="200.0" prefWidth="200.0" styleClass="graph-pane" />
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                <children>
-                  <Label styleClass="panel-title" text="Properties" />
+                  <Label styleClass="panel-title" text="Entity Details" />
                   <ListView fx:id="propertiesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                </children>
                <padding>

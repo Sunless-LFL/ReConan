@@ -1,0 +1,44 @@
+/* SmartGraph Styling for ReConan */
+
+.smart-graph-pane {
+    -fx-background-color: #151515;
+}
+
+.smart-node {
+    -fx-fill: #1a1a1a;
+    -fx-stroke: #b22222;
+    -fx-stroke-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(178, 34, 34, 0.4), 10, 0, 0, 0);
+}
+
+.smart-node:hover {
+    -fx-fill: #2a2a2a;
+    -fx-stroke: #ff4444;
+}
+
+.smart-node-selected {
+    -fx-fill: #b22222;
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 3;
+}
+
+.smart-edge {
+    -fx-stroke: #444444;
+    -fx-stroke-width: 2;
+}
+
+.smart-edge-label {
+    -fx-fill: #a0a0a0;
+    -fx-font-size: 10px;
+}
+
+.smart-node-label {
+    -fx-fill: #f0f0f0;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.smart-arrow {
+    -fx-fill: #444444;
+    -fx-stroke: #444444;
+}

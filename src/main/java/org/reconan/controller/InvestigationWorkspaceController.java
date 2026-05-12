@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
+import org.reconan.model.EntityType;
 import org.reconan.model.Investigation;
 import org.reconan.ui.ViewLoader;
 
@@ -30,10 +31,9 @@ public class InvestigationWorkspaceController {
     public void initialize() {
         System.out.println("Terminal: Initializing Investigation Workspace view...");
         // Initialize palettes
-        entityPaletteList.getItems().addAll(
-                "Person", "Email Address", "Phone Number", 
-                "Organization", "IP Address", "Image"
-        );
+        for (EntityType type : EntityType.values()) {
+            entityPaletteList.getItems().add(type.getLabel());
+        }
     }
 
     /**
