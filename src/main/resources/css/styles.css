@@ -196,6 +196,11 @@
     -fx-background-color: #151515;
 }
 
+.graph-pane .text, .graph-pane Text {
+    -fx-fill: #ffffff !important;
+    -fx-text-fill: #ffffff !important;
+}
+
 .tool-bar {
     -fx-background-color: #1a1a1a;
     -fx-border-color: #333333;
@@ -322,4 +327,22 @@
 .combo-box-popup .list-view {
     -fx-background-color: #1a1a1a;
     -fx-border-color: #444444;
+}
+
+.graph-overlay-button {
+    -fx-background-color: rgba(26, 26, 26, 0.8);
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: #444444;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 8 20;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.graph-overlay-button:hover {
+    -fx-background-color: rgba(178, 34, 34, 0.2);
+    -fx-border-color: #b22222;
+    -fx-text-fill: white;
 }
