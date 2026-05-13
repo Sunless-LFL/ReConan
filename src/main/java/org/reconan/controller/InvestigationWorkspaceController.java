@@ -75,6 +75,7 @@ public class InvestigationWorkspaceController {
         graphManager = new GraphManager();
         graphManager.initializeView(graphPane);
         graphManager.setSelectionListener(this::handleEntitySelection);
+        graphManager.setEdgeSelectionListener(this::handleRelationshipRename);
 
         // Setup Drag and Drop
         setupDragAndDrop();
@@ -164,6 +165,23 @@ public class InvestigationWorkspaceController {
                 return type;
         }
         return null;
+    }
+
+    private void handleRelationshipRename(Relationship relationship) {
+        TextInputDialog dialog = new TextInputDialog(relationship.getLabel());
+        dialog.setTitle("Rename Relationship");
+        dialog.setHeaderText("Update label for this connection");
+        dialog.setContentText("New Label:");
+        styleDialog(dialog);
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newLabel -> {
+            if (!newLabel.trim().isEmpty()) {
+                relationship.setLabel(newLabel.toUpperCase());
+                graphManager.updateView();
+                System.out.println("Terminal: Relationship renamed to: " + newLabel);
+            }
+        });
     }
 
     private void handleEntitySelection(Entity entity) {

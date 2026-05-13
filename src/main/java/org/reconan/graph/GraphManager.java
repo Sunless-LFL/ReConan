@@ -215,6 +215,19 @@ public class GraphManager {
     }
 
     /**
+     * Sets a listener for edge (relationship) double-click events.
+     *
+     * @param onSelect Callback when a relationship is selected.
+     */
+    public void setEdgeSelectionListener(java.util.function.Consumer<Relationship> onSelect) {
+        if (graphView != null) {
+            graphView.setEdgeDoubleClickAction(graphEdge -> {
+                onSelect.accept(graphEdge.getUnderlyingEdge().element());
+            });
+        }
+    }
+
+    /**
      * Adds an entity to the graph.
      *
      * @param entity The entity to add.
