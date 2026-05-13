@@ -27,11 +27,43 @@ ReConan is designed for **digital reconnaissance and relationship analysis**. In
 - **Build Tool**: Maven
 
 ## Architecture
-ReConan follows a modular, **layered architecture**:
-1. **User Interface (JavaFX)**: The interactive graphical environment for investigations.
-2. **Application Layer**: Contains the Investigation Services, Transform Engine, and Graph Manager.
-3. **Data Layer**: Houses Repositories, DAOs, and Entity Models.
-4. **Database**: SQL Server storage for targets, entities, relationships, and investigation logs.
+ReConan follows a clean, **layered architecture** designed for modularity and maintainability:
+
+```mermaid
+graph TD
+    UI[User Interface - JavaFX / FXML] --> Controller[Controllers]
+    Controller --> Graph[Graph Manager - SmartGraph]
+    Controller --> Repo[Repositories]
+    Graph --> Model[Entity Models]
+    Repo --> Model
+    Repo --> DB[(SQL Server)]
+```
+
+### 🏛️ Layered Structure
+1. **User Interface (JavaFX)**:
+   - Uses **FXML** for layout and **CSS** for professional styling.
+   - **ViewLoader** manages scene transitions and FXML loading.
+2. **Controller Layer**:
+   - Manages UI events and coordinates between the Graph Manager and Data Repositories.
+   - Implements complex session-to-database persistence logic (ID mapping).
+3. **Graph Management**:
+   - Built on **JavaFX SmartGraph**, providing a dynamic, force-directed graph environment.
+   - **GraphManager** encapsulates graph logic, custom styling, and layout physics.
+4. **Data Access Layer (Repositories)**:
+   - Uses the **Repository Pattern** with JDBC for database interactions.
+   - Handles CRUD operations for investigations, entities, and relationships.
+5. **Entity Models**:
+   - Plain Java Objects (POJOs) representing the core domain: `Investigation`, `Entity`, and `Relationship`.
+6. **Persistence Layer**:
+   - **SQL Server** database with a relational schema optimized for entity-relationship mapping.
+   - **DatabaseManager** handles automated schema initialization and connectivity.
 
 ## Contributing
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to fork the repository, set up your `.env` file, compile the project using `mvn javafx:run`, and submit Pull Requests.
+
+## Contributors
+Thanks to these wonderful people for contributing to ReConan!
+
+<a href="https://github.com/SBAI-Youness/ReConan/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=SBAI-Youness/ReConan" />
+</a>
