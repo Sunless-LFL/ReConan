@@ -39,7 +39,7 @@ graph TD
     Repo --> DB[(SQL Server)]
 ```
 
-### 🏛️ Layered Structure
+### Layered Structure
 1. **User Interface (JavaFX)**:
    - Uses **FXML** for layout and **CSS** for professional styling.
    - **ViewLoader** manages scene transitions and FXML loading.
