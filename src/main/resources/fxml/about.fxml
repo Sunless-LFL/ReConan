@@ -17,17 +17,19 @@
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="org.reconan.controller.AboutController">
    <children>
-      <VBox layoutX="50.0" layoutY="50.0" spacing="20.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+      <VBox layoutX="50.0" layoutY="50.0" spacing="20.0"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0"
+            AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
          <children>
             <Label styleClass="about-title" text="About ReConan" />
-            <ScrollPane fitToWidth="true" styleClass="about-scroll">
+            <ScrollPane fitToWidth="true" styleClass="about-scroll" VBox.vgrow="ALWAYS">
                <content>
                   <VBox spacing="20.0" styleClass="about-content">
                      <children>
                         <VBox spacing="10.0">
                            <children>
                               <Label styleClass="section-header" text="Project Description" />
-                              <Label styleClass="section-text" text="ReConan is an advanced Open Source Intelligence (OSINT) and cyber investigation platform designed to empower security professionals, researchers, and digital investigators. By aggregating data from a wide array of public and specialized sources—including social media profiles, domain registrations, historical WHOIS data, and leaked database repositories—ReConan provides a unified interface for deep-dive analysis. The platform focuses on modularity and scalability, allowing users to visualize complex relationships between data points and generate comprehensive reports to support cyber-security audits and threat intelligence gathering." wrapText="true" />
+                              <Label styleClass="section-text" text="ReConan is an advanced Open Source Intelligence (OSINT) and cyber investigation platform designed to empower security professionals, researchers, and digital investigators. By aggregating data from a wide array of public and specialized sources-including social media profiles, domain registrations, historical WHOIS data, and leaked database repositories-ReConan provides a unified interface for deep-dive analysis. The platform focuses on modularity and scalability, allowing users to visualize complex relationships between data points and generate comprehensive reports to support cyber-security audits and threat intelligence gathering." wrapText="true" />
                            </children>
                         </VBox>
                         <VBox spacing="10.0">
@@ -82,17 +84,24 @@
                   </VBox>
                </content>
             </ScrollPane>
+            <Button mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back to Menu">
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
-      <Button layoutX="50.0" layoutY="540.0" mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back to Menu" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="50.0" />
-      
+
       <!-- Zoom Overlay -->
-      <StackPane fx:id="zoomOverlay" onMouseClicked="#handleCloseZoom" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="zoom-overlay">
+      <StackPane fx:id="zoomOverlay" onMouseClicked="#handleCloseZoom" visible="false"
+                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                 styleClass="zoom-overlay">
          <children>
             <ImageView fx:id="zoomedImage" fitHeight="500.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" styleClass="zoomed-image-view" />
             <Label text="Click anywhere to close" styleClass="zoom-hint" StackPane.alignment="BOTTOM_CENTER">
                <StackPane.margin>
-                  <javafx.geometry.Insets bottom="20.0" />
+                  <Insets bottom="20.0" />
                </StackPane.margin>
             </Label>
          </children>
