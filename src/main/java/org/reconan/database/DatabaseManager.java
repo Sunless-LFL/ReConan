@@ -59,8 +59,6 @@ public class DatabaseManager {
                 "        investigation_id INT NOT NULL FOREIGN KEY REFERENCES investigations(id),\n" +
                 "        type VARCHAR(50) NOT NULL,\n" +
                 "        value NVARCHAR(MAX) NOT NULL,\n" +
-                "        x_pos FLOAT DEFAULT 0.0,\n" +
-                "        y_pos FLOAT DEFAULT 0.0,\n" +
                 "        created_at DATETIME DEFAULT GETDATE(),\n" +
                 "        updated_at DATETIME DEFAULT GETDATE()\n" +
                 "    );\n" +
