@@ -63,18 +63,18 @@
                                     <VBox alignment="CENTER" spacing="5.0">
                                        <ImageView fitHeight="150.0" fitWidth="250.0" onMouseClicked="#handleZoomImage" pickOnBounds="true" preserveRatio="true" styleClass="zoomable-image">
                                           <image>
-                                             <Image url="@../images/project.PNG" />
-                                          </image>
-                                       </ImageView>
-                                       <Label styleClass="screenshot-label" text="Project Overview" />
-                                    </VBox>
-                                    <VBox alignment="CENTER" spacing="5.0">
-                                       <ImageView fitHeight="150.0" fitWidth="250.0" onMouseClicked="#handleZoomImage" pickOnBounds="true" preserveRatio="true" styleClass="zoomable-image">
-                                          <image>
                                              <Image url="@../images/main.PNG" />
                                           </image>
                                        </ImageView>
                                        <Label styleClass="screenshot-label" text="Main Interface" />
+                                    </VBox>
+                                    <VBox alignment="CENTER" spacing="5.0">
+                                       <ImageView fitHeight="150.0" fitWidth="250.0" onMouseClicked="#handleZoomImage" pickOnBounds="true" preserveRatio="true" styleClass="zoomable-image">
+                                          <image>
+                                             <Image url="@../images/investigation.PNG" />
+                                          </image>
+                                       </ImageView>
+                                       <Label styleClass="screenshot-label" text="Investigation Interface" />
                                     </VBox>
                                  </children>
                               </HBox>
