@@ -12,8 +12,6 @@ public class Entity {
     private int investigationId;
     private EntityType type;
     private String value;
-    private double xPos;
-    private double yPos;
     private Map<String, String> properties;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -58,22 +56,6 @@ public class Entity {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public double getxPos() {
-        return xPos;
-    }
-
-    public void setxPos(double xPos) {
-        this.xPos = xPos;
-    }
-
-    public double getyPos() {
-        return yPos;
-    }
-
-    public void setyPos(double yPos) {
-        this.yPos = yPos;
     }
 
     public Map<String, String> getProperties() {

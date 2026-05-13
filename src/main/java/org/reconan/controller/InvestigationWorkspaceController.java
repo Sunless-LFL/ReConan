@@ -1,5 +1,6 @@
 package org.reconan.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -19,9 +20,14 @@ import org.reconan.graph.GraphManager;
 import org.reconan.model.Entity;
 import org.reconan.model.EntityType;
 import org.reconan.model.Investigation;
+import org.reconan.model.Relationship;
+import org.reconan.repository.EntityRepository;
+import org.reconan.repository.RelationshipRepository;
 import org.reconan.ui.ViewLoader;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -48,7 +54,10 @@ public class InvestigationWorkspaceController {
 
     private Investigation currentInvestigation;
     private GraphManager graphManager;
-    private int entityIdCounter = 1; // Temporary ID counter for unsaved entities
+    private int entityIdCounter = 1;
+
+    private final EntityRepository entityRepository = new EntityRepository();
+    private final RelationshipRepository relationshipRepository = new RelationshipRepository();
 
     @FXML
     public void initialize() {
@@ -234,7 +243,27 @@ public class InvestigationWorkspaceController {
         if (investigation != null) {
             System.out.println("Terminal: Loading data for investigation: " + investigation.getName());
             investigationNameLabel.setText("Investigation: " + investigation.getName());
-            // Here we would eventually load the graph data for this investigation
+            
+            // Load existing entities and relationships AFTER initialization
+            Platform.runLater(() -> loadInvestigationData(investigation.getId()));
+        }
+    }
+
+    private void loadInvestigationData(int investigationId) {
+        // Load Entities
+        Collection<Entity> entities = entityRepository.findByInvestigationId(investigationId);
+        for (Entity entity : entities) {
+            graphManager.addEntity(entity);
+            // Update counter to avoid ID collision
+            if (entity.getId() >= entityIdCounter) {
+                entityIdCounter = entity.getId() + 1;
+            }
+        }
+        
+        // Load Relationships
+        Collection<Relationship> relationships = relationshipRepository.findByInvestigationId(investigationId);
+        for (Relationship rel : relationships) {
+            graphManager.addRelationship(rel);
         }
     }
 
@@ -249,7 +278,53 @@ public class InvestigationWorkspaceController {
 
     @FXML
     private void handleBackToMenu() {
-        System.out.println("Terminal: Returning to Main Menu from Workspace...");
+        if (currentInvestigation == null) {
+            ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Save Investigation");
+        alert.setHeaderText("Do you want to save the changes to: " + currentInvestigation.getName() + "?");
+        alert.setContentText("Select your action:");
+
+        ButtonType saveButton = new ButtonType("Save");
+        ButtonType dontSaveButton = new ButtonType("Don't Save");
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonType.CANCEL.getButtonData());
+
+        alert.getButtonTypes().setAll(saveButton, dontSaveButton, cancelButton);
+        styleDialog(alert);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() == saveButton) {
+                saveCurrentInvestigation();
+                returnToMainMenu();
+            } else if (result.get() == dontSaveButton) {
+                returnToMainMenu();
+            }
+            // If Cancel, do nothing
+        }
+    }
+
+    private void saveCurrentInvestigation() {
+        if (currentInvestigation != null) {
+            int invId = currentInvestigation.getId();
+            
+            // Save Entities
+            Collection<Entity> entities = graphManager.getEntities();
+            entityRepository.saveAll(invId, new ArrayList<>(entities));
+            
+            // Save Relationships
+            Collection<Relationship> relationships = graphManager.getRelationships();
+            relationshipRepository.saveAll(invId, new ArrayList<>(relationships));
+            
+            System.out.println("Terminal: Investigation saved: " + currentInvestigation.getName());
+        }
+    }
+
+    private void returnToMainMenu() {
+        System.out.println("Terminal: Returning to Main Menu...");
         ViewLoader.loadView("/fxml/main_menu.fxml", "ReConan - Main Menu");
     }
 

@@ -154,14 +154,9 @@ public class GraphManager {
             entityMap.put(entity.getId(), entity);
             vertexMap.put(entity.getId(), vertex);
 
-            // For SmartGraph, we need to wait for the view to be updated or initialized
-            // before we can set the position. We'll set it in the model for persistence.
-            entity.setxPos(x);
-            entity.setyPos(y);
-
             if (graphView != null) {
                 graphView.update();
-                // Set visual position using the Vertex wrapper
+                // Set initial visual position for the drop event
                 graphView.setVertexPosition(vertex, x, y);
 
                 // Add CSS class based on entity type
@@ -225,7 +220,7 @@ public class GraphManager {
      * @param entity The entity to add.
      */
     public void addEntity(Entity entity) {
-        addEntity(entity, entity.getxPos(), entity.getyPos());
+        addEntity(entity, 0, 0);
     }
 
     /**
@@ -271,5 +266,15 @@ public class GraphManager {
 
     public Digraph<Entity, Relationship> getGraph() {
         return graph;
+    }
+
+    public Collection<Entity> getEntities() {
+        return entityMap.values();
+    }
+
+    public Collection<Relationship> getRelationships() {
+        Collection<Relationship> relationships = new ArrayList<>();
+        graph.edges().forEach(edge -> relationships.add(edge.element()));
+        return relationships;
     }
 }
