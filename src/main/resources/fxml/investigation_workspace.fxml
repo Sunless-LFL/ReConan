@@ -57,6 +57,7 @@
                   </VBox>
                   <VBox fx:id="actionPanel" spacing="10.0" styleClass="action-panel">
                      <children>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handlePrepareLink" styleClass="action-button-secondary" text="Create Connection" />
                         <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleUpdateEntity" styleClass="action-button-secondary" text="Update Value" />
                         <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleDeleteEntity" styleClass="action-button-delete" text="Delete Entity" />
                      </children>

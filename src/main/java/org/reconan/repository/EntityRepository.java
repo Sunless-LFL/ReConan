@@ -15,37 +15,27 @@ import java.util.Map;
 public class EntityRepository {
 
     /**
-     * Saves all entities for an investigation.
-     * Simplistic approach: Delete existing and re-insert (or use MERGE if SQL Server).
-     * For this OSINT tool, we'll clear and re-save for the specific investigation to ensure sync.
+     * Saves all entities for an investigation and returns a map of session IDs to new database IDs.
      */
-    public void saveAll(int investigationId, List<Entity> entities) {
-        Connection conn = null;
-        try {
-            conn = DatabaseConnection.getConnection();
+    public java.util.Map<Integer, Integer> saveAll(int investigationId, List<Entity> entities) {
+        java.util.Map<Integer, Integer> idMap = new java.util.HashMap<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             
             try {
                 // 1. Delete existing properties
                 String deletePropsSql = "DELETE FROM entity_properties WHERE entity_id IN (SELECT id FROM entities WHERE investigation_id = ?)";
-                PreparedStatement pstmtDelProps = null;
-                try {
-                    pstmtDelProps = conn.prepareStatement(deletePropsSql);
-                    pstmtDelProps.setInt(1, investigationId);
-                    pstmtDelProps.executeUpdate();
-                } finally {
-                    DatabaseConnection.close(pstmtDelProps);
+                try (PreparedStatement pstmt = conn.prepareStatement(deletePropsSql)) {
+                    pstmt.setInt(1, investigationId);
+                    pstmt.executeUpdate();
                 }
 
                 // 2. Delete existing entities
                 String deleteEntitiesSql = "DELETE FROM entities WHERE investigation_id = ?";
-                PreparedStatement pstmtDelEntities = null;
-                try {
-                    pstmtDelEntities = conn.prepareStatement(deleteEntitiesSql);
-                    pstmtDelEntities.setInt(1, investigationId);
-                    pstmtDelEntities.executeUpdate();
-                } finally {
-                    DatabaseConnection.close(pstmtDelEntities);
+                try (PreparedStatement pstmt = conn.prepareStatement(deleteEntitiesSql)) {
+                    pstmt.setInt(1, investigationId);
+                    pstmt.executeUpdate();
                 }
 
                 // 3. Insert new entities and their properties
@@ -53,6 +43,7 @@ public class EntityRepository {
                 String insertPropSql = "INSERT INTO entity_properties (entity_id, property_key, property_value) VALUES (?, ?, ?)";
 
                 for (Entity entity : entities) {
+                    int oldId = entity.getId();
                     try (PreparedStatement pstmt = conn.prepareStatement(insertEntitySql, Statement.RETURN_GENERATED_KEYS)) {
                         pstmt.setInt(1, investigationId);
                         pstmt.setString(2, entity.getType().name());
@@ -63,6 +54,7 @@ public class EntityRepository {
                             if (rs.next()) {
                                 int newId = rs.getInt(1);
                                 entity.setId(newId);
+                                idMap.put(oldId, newId);
                                 
                                 // Insert properties
                                 if (!entity.getProperties().isEmpty()) {
@@ -83,12 +75,14 @@ public class EntityRepository {
 
                 conn.commit();
                 System.out.println("SQL Server: Successfully saved " + entities.size() + " entities.");
+                return idMap;
             } catch (SQLException e) {
                 conn.rollback();
                 throw e;
             }
         } catch (SQLException e) {
             System.err.println("SQL Server: Error saving entities: " + e.getMessage());
+            return idMap;
         }
     }
 

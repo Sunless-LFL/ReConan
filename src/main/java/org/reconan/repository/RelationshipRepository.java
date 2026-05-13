@@ -12,6 +12,17 @@ import java.util.List;
  */
 public class RelationshipRepository {
 
+    public void deleteAll(int investigationId) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement("DELETE FROM relationships WHERE investigation_id = ?")) {
+            pstmt.setInt(1, investigationId);
+            pstmt.executeUpdate();
+            System.out.println("SQL Server: Cleared relationships for investigation " + investigationId);
+        } catch (SQLException e) {
+            System.err.println("SQL Server: Error clearing relationships: " + e.getMessage());
+        }
+    }
+
     public void saveAll(int investigationId, List<Relationship> relationships) {
         Connection conn = null;
         try {

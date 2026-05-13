@@ -28,6 +28,7 @@ import org.reconan.ui.ViewLoader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -51,6 +52,8 @@ public class InvestigationWorkspaceController {
     private VBox actionPanel;
 
     private Entity selectedEntity;
+    private Entity sourceEntity;
+    private boolean linkingMode = false;
 
     private Investigation currentInvestigation;
     private GraphManager graphManager;
@@ -164,6 +167,11 @@ public class InvestigationWorkspaceController {
     }
 
     private void handleEntitySelection(Entity entity) {
+        if (linkingMode && sourceEntity != null && entity != sourceEntity) {
+            completeLink(entity);
+            return;
+        }
+
         this.selectedEntity = entity;
         System.out.println("Terminal: Entity selected: " + entity.getValue());
         
@@ -191,6 +199,45 @@ public class InvestigationWorkspaceController {
         VBox pair = new VBox(keyLabel, valueLabel);
         pair.setSpacing(2);
         detailsContainer.getChildren().add(pair);
+    }
+
+    @FXML
+    private void handlePrepareLink() {
+        if (selectedEntity == null) return;
+        
+        this.linkingMode = true;
+        this.sourceEntity = selectedEntity;
+        
+        System.out.println("Terminal: Linking mode active. Select target node.");
+        
+        // Visual feedback
+        Label tip = new Label("Select target node...");
+        tip.setStyle("-fx-text-fill: #ffeb3b; -fx-font-style: italic;");
+        detailsContainer.getChildren().add(0, tip);
+    }
+
+    private void completeLink(Entity targetEntity) {
+        TextInputDialog dialog = new TextInputDialog("RELATED_TO");
+        dialog.setTitle("Create Connection");
+        dialog.setHeaderText("Link " + sourceEntity.getValue() + " -> " + targetEntity.getValue());
+        dialog.setContentText("Relationship Label:");
+        styleDialog(dialog);
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(label -> {
+            String finalLabel = label.trim().isEmpty() ? "RELATED_TO" : label.toUpperCase();
+            Relationship rel = new Relationship(sourceEntity.getId(), targetEntity.getId(), finalLabel);
+            if (currentInvestigation != null) {
+                rel.setInvestigationId(currentInvestigation.getId());
+            }
+            graphManager.addRelationship(rel);
+            System.out.println("Terminal: Relationship created: " + finalLabel);
+        });
+
+        // Reset mode
+        linkingMode = false;
+        sourceEntity = null;
+        handleEntitySelection(targetEntity); // Refresh sidebar
     }
 
     @FXML
@@ -311,12 +358,24 @@ public class InvestigationWorkspaceController {
         if (currentInvestigation != null) {
             int invId = currentInvestigation.getId();
             
-            // Save Entities
-            Collection<Entity> entities = graphManager.getEntities();
-            entityRepository.saveAll(invId, new ArrayList<>(entities));
+            // 0. Clear relationships first to avoid FK constraint violations when deleting entities
+            relationshipRepository.deleteAll(invId);
             
-            // Save Relationships
+            // 1. Save Entities and get ID Map (OldID -> NewID)
+            Collection<Entity> entities = graphManager.getEntities();
+            Map<Integer, Integer> idMap = entityRepository.saveAll(invId, new ArrayList<>(entities));
+            
+            // 2. Update Relationship IDs using the Map
             Collection<Relationship> relationships = graphManager.getRelationships();
+            for (Relationship rel : relationships) {
+                Integer newSourceId = idMap.get(rel.getSourceId());
+                Integer newTargetId = idMap.get(rel.getTargetId());
+                
+                if (newSourceId != null) rel.setSourceId(newSourceId);
+                if (newTargetId != null) rel.setTargetId(newTargetId);
+            }
+            
+            // 3. Save Relationships
             relationshipRepository.saveAll(invId, new ArrayList<>(relationships));
             
             System.out.println("Terminal: Investigation saved: " + currentInvestigation.getName());
