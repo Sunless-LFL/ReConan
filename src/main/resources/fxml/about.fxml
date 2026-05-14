@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="about-root" 
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="org.reconan.controller.AboutController">
+   <children>
+      <VBox layoutX="50.0" layoutY="50.0" spacing="20.0"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0"
+            AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+         <children>
+            <Label styleClass="about-title" text="About ReConan" />
+            <ScrollPane fitToWidth="true" styleClass="about-scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox spacing="20.0" styleClass="about-content">
+                     <children>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label styleClass="section-header" text="Project Description" />
+                              <Label styleClass="section-text" text="ReConan is an advanced Open Source Intelligence (OSINT) and cyber investigation platform designed to empower security professionals, researchers, and digital investigators. By aggregating data from a wide array of public and specialized sources-including social media profiles, domain registrations, historical WHOIS data, and leaked database repositories-ReConan provides a unified interface for deep-dive analysis. The platform focuses on modularity and scalability, allowing users to visualize complex relationships between data points and generate comprehensive reports to support cyber-security audits and threat intelligence gathering." wrapText="true" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label styleClass="section-header" text="Resources" />
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="section-text-dim" text="Source Code:" />
+                                    <Hyperlink onAction="#handleGithubLink" text="GitHub Repository" />
+                                 </children>
+                              </HBox>
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="section-text-dim" text="Official Website:" />
+                                    <Hyperlink onAction="#handleWebsiteLink" text="ReConan Documentation" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label styleClass="section-header" text="How to Use" />
+                              <Label styleClass="section-text" text="1. Start by creating a new investigation or opening an existing one from the main menu.&#10;2. Use the integrated tools to perform searches across social media, domain registries, and leaked databases.&#10;3. Visualize connections and export detailed reports of your findings." wrapText="true" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="10.0">
+                           <children>
+                              <Label styleClass="section-header" text="Demo Screenshots" />
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <VBox alignment="CENTER" spacing="5.0">
+                                       <ImageView fitHeight="150.0" fitWidth="250.0" onMouseClicked="#handleZoomImage" pickOnBounds="true" preserveRatio="true" styleClass="zoomable-image">
+                                          <image>
+                                             <Image url="@../images/main.PNG" />
+                                          </image>
+                                       </ImageView>
+                                       <Label styleClass="screenshot-label" text="Main Interface" />
+                                    </VBox>
+                                    <VBox alignment="CENTER" spacing="5.0">
+                                       <ImageView fitHeight="150.0" fitWidth="250.0" onMouseClicked="#handleZoomImage" pickOnBounds="true" preserveRatio="true" styleClass="zoomable-image">
+                                          <image>
+                                             <Image url="@../images/investigation.PNG" />
+                                          </image>
+                                       </ImageView>
+                                       <Label styleClass="screenshot-label" text="Investigation Interface" />
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <Button mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back to Menu">
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+
+      <!-- Zoom Overlay -->
+      <StackPane fx:id="zoomOverlay" onMouseClicked="#handleCloseZoom" visible="false"
+                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                 styleClass="zoom-overlay">
+         <children>
+            <ImageView fx:id="zoomedImage" fitHeight="500.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" styleClass="zoomed-image-view" />
+            <Label text="Click anywhere to close" styleClass="zoom-hint" StackPane.alignment="BOTTOM_CENTER">
+               <StackPane.margin>
+                  <Insets bottom="20.0" />
+               </StackPane.margin>
+            </Label>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

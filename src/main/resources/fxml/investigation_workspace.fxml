@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+
+<StackPane prefHeight="768.0" prefWidth="1024.0" styleClass="workspace-root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.reconan.controller.InvestigationWorkspaceController">
+   <children>
+      <BorderPane>
+          <top>
+             <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="workspace-header" BorderPane.alignment="CENTER">
+                <children>
+                   <Label fx:id="investigationNameLabel" onMouseClicked="#handleRenameInvestigation" styleClass="workspace-title-clickable" text="Investigation: Untitled" />
+                   <Pane HBox.hgrow="ALWAYS" />
+                   <Button mnemonicParsing="false" onAction="#handleBackToMenu" styleClass="action-button-secondary" text="Back to Menu" />
+                </children>
+                <padding>
+                   <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                </padding>
+             </HBox>
+          </top>
+         <center>
+            <SplitPane dividerPositions="0.2, 0.8" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <Label styleClass="panel-title" text="Entity Palette" />
+                        <ListView fx:id="entityPaletteList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+                  <StackPane fx:id="graphPane" prefHeight="200.0" prefWidth="200.0" styleClass="graph-pane">
+                     <children>
+                        <VBox alignment="TOP_RIGHT" pickOnBounds="false" spacing="10.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#handleToggleLayout" styleClass="graph-overlay-button" text="Toggle Layout" />
+                           </children>
+                           <padding>
+                              <Insets right="15.0" top="15.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </StackPane>
+                  <VBox prefHeight="200.0" prefWidth="250.0" spacing="15.0" styleClass="details-panel">
+                     <children>
+                        <Label styleClass="panel-title" text="Entity Details" />
+                        <VBox fx:id="detailsContainer" spacing="10.0" VBox.vgrow="ALWAYS" styleClass="properties-container">
+                           <!-- Property labels will be added here dynamically -->
+                        </VBox>
+                        <VBox fx:id="actionPanel" spacing="10.0" styleClass="action-panel">
+                           <children>
+                              <Button fx:id="runTransformButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRunTransform" styleClass="action-button-primary" text="Run Transform" />
+                              <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handlePrepareLink" styleClass="action-button-secondary" text="Create Connection" />
+                              <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleUpdateEntity" styleClass="action-button-secondary" text="Update Value" />
+                              <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleDeleteEntity" styleClass="action-button-delete" text="Delete Entity" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+      
+      <!-- Zoom Overlay -->
+      <StackPane fx:id="zoomOverlay" onMouseClicked="#handleCloseZoom" visible="false" styleClass="zoom-overlay">
+         <children>
+            <ImageView fx:id="zoomedImage" fitHeight="600.0" fitWidth="900.0" pickOnBounds="true" preserveRatio="true" styleClass="zoomed-image-view" />
+            <Label text="Click anywhere to close" styleClass="zoom-hint" StackPane.alignment="BOTTOM_CENTER">
+               <StackPane.margin>
+                  <Insets bottom="30.0" />
+               </StackPane.margin>
+            </Label>
+         </children>
+      </StackPane>
+   </children>
+</StackPane>

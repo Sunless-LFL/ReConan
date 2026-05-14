@@ -1,0 +1,96 @@
+/* SmartGraph Styling for ReConan */
+
+.smart-graph-pane {
+    -fx-background-color: #151515;
+}
+
+.smart-node {
+    -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 50% 50%, radius 50%, #444444, #1a1a1a);
+    -fx-stroke: #b22222;
+    -fx-stroke-width: 2.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(178, 34, 34, 0.4), 15, 0, 0, 0);
+}
+
+.smart-node:hover {
+    -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 50% 50%, radius 50%, #555555, #222222);
+    -fx-stroke: #ff5252;
+    -fx-stroke-width: 3.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 82, 82, 0.6), 20, 0, 0, 0);
+}
+
+.smart-node-selected {
+    -fx-fill: #b22222;
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 4;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.4), 20, 0, 0, 0);
+}
+
+/* Entity Type Specific Styles */
+.person {
+    -fx-stroke: #2196f3; /* Blue */
+    -fx-effect: dropshadow(three-pass-box, rgba(33, 150, 243, 0.4), 10, 0, 0, 0);
+}
+.email {
+    -fx-stroke: #4caf50; /* Green */
+    -fx-effect: dropshadow(three-pass-box, rgba(76, 175, 80, 0.4), 10, 0, 0, 0);
+}
+.phone {
+    -fx-stroke: #ffeb3b; /* Yellow */
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 235, 59, 0.4), 10, 0, 0, 0);
+}
+.organization {
+    -fx-stroke: #9c27b0; /* Purple */
+    -fx-effect: dropshadow(three-pass-box, rgba(156, 39, 176, 0.4), 10, 0, 0, 0);
+}
+.ip-address {
+    -fx-stroke: #ff9800; /* Orange */
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 152, 0, 0.4), 10, 0, 0, 0);
+}
+.domain {
+    -fx-stroke: #00bcd4; /* Cyan */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 188, 212, 0.4), 10, 0, 0, 0);
+}
+.image {
+    -fx-stroke: #e91e63; /* Pink */
+    -fx-effect: dropshadow(three-pass-box, rgba(233, 30, 99, 0.4), 10, 0, 0, 0);
+}
+.url {
+    -fx-stroke: #8bc34a; /* Lime */
+    -fx-effect: dropshadow(three-pass-box, rgba(139, 195, 74, 0.4), 10, 0, 0, 0);
+}
+
+.edge {
+    -fx-stroke: #ff5252; /* Softer, premium red */
+    -fx-stroke-width: 1.2;
+    -fx-stroke-dash-array: 6 6;
+    -fx-opacity: 0.5;
+}
+
+.edge:hover {
+    -fx-stroke: #ffeb3b;
+    -fx-stroke-width: 2.5;
+    -fx-stroke-dash-array: 6 6;
+    -fx-opacity: 1.0;
+}
+
+.edge-label {
+    -fx-fill: #e0e0e0 !important;
+    -fx-font-size: 11px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 3, 0.5, 0, 1);
+}
+
+/* Node Label Styles */
+.smart-graph-pane .text, 
+.smart-graph-pane Text,
+.smart-node-label, 
+Text.smart-node-label {
+    -fx-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 4, 0.5, 0, 1);
+}
+
+.arrow {
+    -fx-fill: #ff5252;
+    -fx-stroke: #ff5252;
+    -fx-opacity: 0.7;
+}
