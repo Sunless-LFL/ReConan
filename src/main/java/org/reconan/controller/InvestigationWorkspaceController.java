@@ -16,9 +16,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import org.reconan.graph.GraphManager;
 import org.reconan.model.Entity;
 import org.reconan.model.EntityType;
@@ -465,26 +470,64 @@ public class InvestigationWorkspaceController {
     private void handleRenameInvestigation() {
         if (currentInvestigation == null) return;
 
-        TextInputDialog dialog = new TextInputDialog(currentInvestigation.getName());
-        dialog.setTitle("Rename Investigation");
-        dialog.setHeaderText("Current Name: " + currentInvestigation.getName());
-        dialog.setContentText("Enter New Name:");
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Investigation Settings");
+        dialog.setHeaderText(null);
         styleDialog(dialog);
 
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(newName -> {
-            if (!newName.trim().isEmpty()) {
-                currentInvestigation.setName(newName);
-                investigationNameLabel.setText("Investigation: " + newName);
+        VBox content = new VBox(25);
+        content.setPadding(new Insets(30));
+        content.setPrefWidth(450);
 
-                if (investigationRepository.update(currentInvestigation)) {
-                    System.out.println("Terminal: Investigation renamed to: " + newName);
-                } else {
-                    System.err.println("Terminal: Failed to update investigation name in DB.");
+        Label title = new Label("INVESTIGATION SETTINGS");
+        title.setStyle("-fx-text-fill: #b22222; -fx-font-size: 11px; -fx-font-weight: bold; -fx-letter-spacing: 1px;");
+
+        // Name Field
+        VBox nameGroup = new VBox(8);
+        Label nameLabel = new Label("Name");
+        nameLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 12px;");
+        TextField nameField = new TextField(currentInvestigation.getName());
+        nameField.setPromptText("Investigation name");
+        nameField.setPrefHeight(45);
+        nameGroup.getChildren().addAll(nameLabel, nameField);
+
+        // Description Field
+        VBox descGroup = new VBox(8);
+        Label descLabel = new Label("Description");
+        descLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 12px;");
+        TextArea descArea = new TextArea(currentInvestigation.getDescription());
+        descArea.setPromptText("Optional description...");
+        descArea.setPrefRowCount(4);
+        descArea.setWrapText(true);
+        descGroup.getChildren().addAll(descLabel, descArea);
+
+        content.getChildren().addAll(title, nameGroup, descGroup);
+        dialog.getDialogPane().setContent(content);
+
+        ButtonType saveButtonType = new ButtonType("Apply Changes", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(button -> {
+            if (button == saveButtonType) {
+                String newName = nameField.getText().trim();
+                String newDesc = descArea.getText().trim();
+
+                if (!newName.isEmpty()) {
+                    currentInvestigation.setName(newName);
+                    currentInvestigation.setDescription(newDesc);
+                    investigationNameLabel.setText("Investigation: " + newName);
+                    
+                    if (investigationRepository.update(currentInvestigation)) {
+                        System.out.println("Terminal: Investigation settings updated.");
+                    }
                 }
             }
+            return null;
         });
+
+        dialog.showAndWait();
     }
+
 
     @FXML
     private void handleBackToMenu() {
