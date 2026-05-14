@@ -10,7 +10,9 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -51,6 +53,15 @@ public class InvestigationWorkspaceController {
     @FXML
     private VBox actionPanel;
 
+    @FXML
+    private StackPane zoomOverlay;
+
+    @FXML
+    private ImageView zoomedImage;
+
+    private double lastMouseX;
+    private double lastMouseY;
+
     private Entity selectedEntity;
     private Entity sourceEntity;
     private boolean linkingMode = false;
@@ -79,10 +90,52 @@ public class InvestigationWorkspaceController {
 
         // Setup Drag and Drop
         setupDragAndDrop();
-        
+
         // Hide action panel initially
         actionPanel.setVisible(false);
         actionPanel.setManaged(false);
+
+        setupZoomAndPanning();
+    }
+
+    private void setupZoomAndPanning() {
+        // Mouse Wheel Zoom
+        zoomOverlay.addEventHandler(ScrollEvent.SCROLL, event -> {
+            if (zoomOverlay.isVisible()) {
+                double delta = event.getDeltaY();
+                double zoomFactor = 1.05;
+                if (delta < 0)
+                    zoomFactor = 2.0 - zoomFactor;
+
+                double newScaleX = zoomedImage.getScaleX() * zoomFactor;
+                double newScaleY = zoomedImage.getScaleY() * zoomFactor;
+
+                if (newScaleX > 0.5 && newScaleX < 10) {
+                    zoomedImage.setScaleX(newScaleX);
+                    zoomedImage.setScaleY(newScaleY);
+                }
+                event.consume();
+            }
+        });
+
+        // Mouse Drag Panning
+        zoomedImage.setOnMousePressed(event -> {
+            lastMouseX = event.getSceneX();
+            lastMouseY = event.getSceneY();
+            event.consume();
+        });
+
+        zoomedImage.setOnMouseDragged(event -> {
+            double deltaX = event.getSceneX() - lastMouseX;
+            double deltaY = event.getSceneY() - lastMouseY;
+
+            zoomedImage.setTranslateX(zoomedImage.getTranslateX() + deltaX);
+            zoomedImage.setTranslateY(zoomedImage.getTranslateY() + deltaY);
+
+            lastMouseX = event.getSceneX();
+            lastMouseY = event.getSceneY();
+            event.consume();
+        });
     }
 
     private void setupDragAndDrop() {
@@ -192,28 +245,59 @@ public class InvestigationWorkspaceController {
 
         this.selectedEntity = entity;
         System.out.println("Terminal: Entity selected: " + entity.getValue());
-        
+
         detailsContainer.getChildren().clear();
-        
+
         // Show action panel
         actionPanel.setVisible(true);
         actionPanel.setManaged(true);
-        
+
         addDetailLabel("Type", entity.getType().getLabel());
         addDetailLabel("Value", entity.getValue());
         addDetailLabel("ID", String.valueOf(entity.getId()));
-        
+
+        if (entity.getType() == EntityType.IMAGE) {
+            try {
+                File file = new File(entity.getValue());
+                if (file.exists()) {
+                    Image img = new Image(file.toURI().toString());
+                    ImageView imageView = new ImageView(img);
+                    imageView.setFitWidth(180);
+                    imageView.setPreserveRatio(true);
+                    imageView.setStyle(
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-cursor: hand;");
+
+                    // Click to Zoom
+                    imageView.setOnMouseClicked(event -> {
+                        zoomedImage.setImage(img);
+                        zoomedImage.setScaleX(1.0);
+                        zoomedImage.setScaleY(1.0);
+                        zoomedImage.setTranslateX(0);
+                        zoomedImage.setTranslateY(0);
+                        zoomOverlay.setVisible(true);
+                    });
+
+                    VBox imgContainer = new VBox(new Label("Preview (Click to Zoom):"), imageView);
+                    imgContainer.setSpacing(5);
+                    imgContainer.setPadding(new javafx.geometry.Insets(10, 0, 10, 0));
+                    detailsContainer.getChildren().add(imgContainer);
+                }
+            } catch (Exception e) {
+                System.err.println("Terminal: Error loading entity image: " + e.getMessage());
+            }
+        }
+
         entity.getProperties().forEach(this::addDetailLabel);
     }
 
     private void addDetailLabel(String key, String value) {
         Label keyLabel = new Label(key + ":");
         keyLabel.getStyleClass().add("property-key");
-        
+
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("property-value");
         valueLabel.setWrapText(true);
-        
+
         VBox pair = new VBox(keyLabel, valueLabel);
         pair.setSpacing(2);
         detailsContainer.getChildren().add(pair);
@@ -221,13 +305,14 @@ public class InvestigationWorkspaceController {
 
     @FXML
     private void handlePrepareLink() {
-        if (selectedEntity == null) return;
-        
+        if (selectedEntity == null)
+            return;
+
         this.linkingMode = true;
         this.sourceEntity = selectedEntity;
-        
+
         System.out.println("Terminal: Linking mode active. Select target node.");
-        
+
         // Visual feedback
         Label tip = new Label("Select target node...");
         tip.setStyle("-fx-text-fill: #ffeb3b; -fx-font-style: italic;");
@@ -260,7 +345,8 @@ public class InvestigationWorkspaceController {
 
     @FXML
     private void handleUpdateEntity() {
-        if (selectedEntity == null) return;
+        if (selectedEntity == null)
+            return;
 
         TextInputDialog dialog = new TextInputDialog(selectedEntity.getValue());
         dialog.setTitle("Update Entity");
@@ -280,7 +366,8 @@ public class InvestigationWorkspaceController {
 
     @FXML
     private void handleDeleteEntity() {
-        if (selectedEntity == null) return;
+        if (selectedEntity == null)
+            return;
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Entity");
@@ -308,7 +395,7 @@ public class InvestigationWorkspaceController {
         if (investigation != null) {
             System.out.println("Terminal: Loading data for investigation: " + investigation.getName());
             investigationNameLabel.setText("Investigation: " + investigation.getName());
-            
+
             // Load existing entities and relationships AFTER initialization
             Platform.runLater(() -> loadInvestigationData(investigation.getId()));
         }
@@ -324,7 +411,7 @@ public class InvestigationWorkspaceController {
                 entityIdCounter = entity.getId() + 1;
             }
         }
-        
+
         // Load Relationships
         Collection<Relationship> relationships = relationshipRepository.findByInvestigationId(investigationId);
         for (Relationship rel : relationships) {
@@ -332,13 +419,16 @@ public class InvestigationWorkspaceController {
         }
     }
 
-    private boolean autoLayoutEnabled = true;
-
     @FXML
     private void handleToggleLayout() {
-        autoLayoutEnabled = !autoLayoutEnabled;
-        System.out.println("Terminal: Automatic Layout " + (autoLayoutEnabled ? "Enabled" : "Disabled"));
-        graphManager.setAutomaticLayout(autoLayoutEnabled);
+        if (graphManager != null) {
+            graphManager.toggleAutomaticLayout();
+        }
+    }
+
+    @FXML
+    private void handleCloseZoom() {
+        zoomOverlay.setVisible(false);
     }
 
     @FXML
@@ -375,27 +465,30 @@ public class InvestigationWorkspaceController {
     private void saveCurrentInvestigation() {
         if (currentInvestigation != null) {
             int invId = currentInvestigation.getId();
-            
-            // 0. Clear relationships first to avoid FK constraint violations when deleting entities
+
+            // 0. Clear relationships first to avoid FK constraint violations when deleting
+            // entities
             relationshipRepository.deleteAll(invId);
-            
+
             // 1. Save Entities and get ID Map (OldID -> NewID)
             Collection<Entity> entities = graphManager.getEntities();
             Map<Integer, Integer> idMap = entityRepository.saveAll(invId, new ArrayList<>(entities));
-            
+
             // 2. Update Relationship IDs using the Map
             Collection<Relationship> relationships = graphManager.getRelationships();
             for (Relationship rel : relationships) {
                 Integer newSourceId = idMap.get(rel.getSourceId());
                 Integer newTargetId = idMap.get(rel.getTargetId());
-                
-                if (newSourceId != null) rel.setSourceId(newSourceId);
-                if (newTargetId != null) rel.setTargetId(newTargetId);
+
+                if (newSourceId != null)
+                    rel.setSourceId(newSourceId);
+                if (newTargetId != null)
+                    rel.setTargetId(newTargetId);
             }
-            
+
             // 3. Save Relationships
             relationshipRepository.saveAll(invId, new ArrayList<>(relationships));
-            
+
             System.out.println("Terminal: Investigation saved: " + currentInvestigation.getName());
         }
     }
@@ -412,7 +505,7 @@ public class InvestigationWorkspaceController {
             System.err.println("Terminal: Could not load styles.css for dialog.");
         }
         dialog.getDialogPane().getStyleClass().add("dialog-pane");
-        
+
         try {
             Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));

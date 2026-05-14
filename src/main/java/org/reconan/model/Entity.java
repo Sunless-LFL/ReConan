@@ -88,6 +88,14 @@ public class Entity {
 
     @Override
     public String toString() {
+        if (type == EntityType.IMAGE && value != null) {
+            try {
+                java.io.File file = new java.io.File(value);
+                return file.getName();
+            } catch (Exception e) {
+                return value;
+            }
+        }
         return value;
     }
 }

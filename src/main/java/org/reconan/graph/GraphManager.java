@@ -30,6 +30,7 @@ public class GraphManager {
     private final Map<Integer, Entity> entityMap;
     private final Map<Integer, Vertex<Entity>> vertexMap;
     private SmartGraphPanel<Entity, Relationship> graphView;
+    private boolean isAutomaticLayout = true;
 
     public GraphManager() {
         this.graph = new DigraphEdgeList<>();
@@ -130,16 +131,7 @@ public class GraphManager {
         }
     }
 
-    /**
-     * Toggles the automatic layout of the graph.
-     *
-     * @param enabled True to enable, false to disable.
-     */
-    public void setAutomaticLayout(boolean enabled) {
-        if (graphView != null) {
-            graphView.setAutomaticLayout(enabled);
-        }
-    }
+
 
     /**
      * Adds an entity to the graph at specific coordinates.
@@ -248,6 +240,21 @@ public class GraphManager {
         if (source != null && target != null) {
             graph.insertEdge(source, target, relationship);
             updateView();
+        }
+    }
+
+    public void toggleAutomaticLayout() {
+        if (graphView != null) {
+            isAutomaticLayout = !isAutomaticLayout;
+            graphView.setAutomaticLayout(isAutomaticLayout);
+            System.out.println("Terminal: Automatic Layout " + (isAutomaticLayout ? "Enabled" : "Disabled"));
+        }
+    }
+
+    public void setAutomaticLayout(boolean enabled) {
+        if (graphView != null) {
+            this.isAutomaticLayout = enabled;
+            graphView.setAutomaticLayout(enabled);
         }
     }
 
