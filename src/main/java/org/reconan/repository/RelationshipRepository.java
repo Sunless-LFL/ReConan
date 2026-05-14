@@ -24,55 +24,82 @@ public class RelationshipRepository {
     }
 
     public void saveAll(int investigationId, List<Relationship> relationships) {
-        Connection conn = null;
-        try {
-            conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // 1. Delete existing relationships for this investigation
-                String deleteSql = "DELETE FROM relationships WHERE investigation_id = ?";
-                PreparedStatement pstmtDel = null;
-                try {
-                    pstmtDel = conn.prepareStatement(deleteSql);
-                    pstmtDel.setInt(1, investigationId);
-                    pstmtDel.executeUpdate();
-                } finally {
-                    DatabaseConnection.close(pstmtDel);
+                // 1. Get existing relationship IDs
+                List<Integer> dbIds = new ArrayList<>();
+                String selectIdsSql = "SELECT id FROM relationships WHERE investigation_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(selectIdsSql)) {
+                    pstmt.setInt(1, investigationId);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        while (rs.next()) {
+                            dbIds.add(rs.getInt(1));
+                        }
+                    }
                 }
 
-                // 2. Insert new ones
+                // 2. Prepare statements
                 String insertSql = "INSERT INTO relationships (investigation_id, source_id, target_id, label, created_at) VALUES (?, ?, ?, ?, GETDATE())";
-                PreparedStatement pstmtIns = null;
-                try {
-                    pstmtIns = conn.prepareStatement(insertSql);
-                    for (Relationship rel : relationships) {
-                        pstmtIns.setInt(1, investigationId);
-                        pstmtIns.setInt(2, rel.getSourceId());
-                        pstmtIns.setInt(3, rel.getTargetId());
-                        pstmtIns.setString(4, rel.getLabel());
-                        pstmtIns.addBatch();
+                String updateSql = "UPDATE relationships SET source_id = ?, target_id = ?, label = ? WHERE id = ?";
+
+                List<Integer> currentRelIds = new ArrayList<>();
+
+                for (Relationship rel : relationships) {
+                    if (dbIds.contains(rel.getId())) {
+                        // UPDATE
+                        try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+                            pstmt.setInt(1, rel.getSourceId());
+                            pstmt.setInt(2, rel.getTargetId());
+                            pstmt.setString(3, rel.getLabel());
+                            pstmt.setInt(4, rel.getId());
+                            pstmt.executeUpdate();
+                        }
+                        currentRelIds.add(rel.getId());
+                    } else {
+                        // INSERT
+                        try (PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+                            pstmt.setInt(1, investigationId);
+                            pstmt.setInt(2, rel.getSourceId());
+                            pstmt.setInt(3, rel.getTargetId());
+                            pstmt.setString(4, rel.getLabel());
+                            pstmt.executeUpdate();
+
+                            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                                if (rs.next()) {
+                                    rel.setId(rs.getInt(1));
+                                    currentRelIds.add(rel.getId());
+                                }
+                            }
+                        }
                     }
-                    pstmtIns.executeBatch();
-                } finally {
-                    DatabaseConnection.close(pstmtIns);
+                }
+
+                // 3. Delete orphans
+                for (Integer dbId : dbIds) {
+                    if (!currentRelIds.contains(dbId)) {
+                        String deleteSql = "DELETE FROM relationships WHERE id = ?";
+                        try (PreparedStatement pstmt = conn.prepareStatement(deleteSql)) {
+                            pstmt.setInt(1, dbId);
+                            pstmt.executeUpdate();
+                        }
+                    }
                 }
 
                 conn.commit();
-                System.out.println("SQL Server: Successfully saved " + relationships.size() + " relationships.");
+                System.out.println("SQL Server: Successfully synchronized " + relationships.size() + " relationships.");
             } catch (SQLException e) {
-                if (conn != null) conn.rollback();
+                conn.rollback();
                 throw e;
             }
         } catch (SQLException e) {
             System.err.println("SQL Server: Error saving relationships: " + e.getMessage());
-        } finally {
-            DatabaseConnection.close(conn);
         }
     }
 
     public List<Relationship> findByInvestigationId(int investigationId) {
         List<Relationship> relationships = new ArrayList<>();
-        String sql = "SELECT id, source_id, target_id, label FROM relationships WHERE investigation_id = ?";
+        String sql = "SELECT id, source_id, target_id, label, created_at FROM relationships WHERE investigation_id = ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -91,6 +118,12 @@ public class RelationshipRepository {
                 );
                 rel.setId(rs.getInt("id"));
                 rel.setInvestigationId(investigationId);
+
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    rel.setCreatedAt(createdAt.toLocalDateTime());
+                }
+
                 relationships.add(rel);
             }
         } catch (SQLException e) {
@@ -100,4 +133,5 @@ public class RelationshipRepository {
         }
         return relationships;
     }
+
 }
