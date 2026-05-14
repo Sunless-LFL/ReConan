@@ -3,6 +3,7 @@ package org.reconan.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -223,20 +224,47 @@ public class InvestigationWorkspaceController {
     }
 
     private void handleRelationshipRename(Relationship relationship) {
-        TextInputDialog dialog = new TextInputDialog(relationship.getLabel());
-        dialog.setTitle("Rename Relationship");
-        dialog.setHeaderText("Update label for this connection");
-        dialog.setContentText("New Label:");
-        styleDialog(dialog);
+        // Show a choice dialog: Rename or Delete
+        ButtonType renameBtn = new ButtonType("Rename", ButtonBar.ButtonData.OK_DONE);
+        ButtonType deleteBtn = new ButtonType("Remove Connection", ButtonBar.ButtonData.OTHER);
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(newLabel -> {
-            if (!newLabel.trim().isEmpty()) {
-                relationship.setLabel(newLabel.toUpperCase());
-                graphManager.updateView();
-                System.out.println("Terminal: Relationship renamed to: " + newLabel);
-            }
-        });
+        Alert choiceAlert = new Alert(Alert.AlertType.NONE,
+                "Connection: " + relationship.getLabel(), renameBtn, deleteBtn, cancelBtn);
+        choiceAlert.setTitle("Manage Connection");
+        choiceAlert.setHeaderText("What would you like to do with this connection?");
+        styleDialog(choiceAlert);
+
+        Optional<ButtonType> choice = choiceAlert.showAndWait();
+        if (choice.isEmpty() || choice.get() == cancelBtn) return;
+
+        if (choice.get() == deleteBtn) {
+            // Confirm deletion
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Remove Connection");
+            confirm.setHeaderText("Delete connection: \"" + relationship.getLabel() + "\"?");
+            confirm.setContentText("This action cannot be undone.");
+            styleDialog(confirm);
+            confirm.showAndWait().ifPresent(result -> {
+                if (result == ButtonType.OK) {
+                    graphManager.removeRelationship(relationship);
+                    System.out.println("Terminal: Relationship removed: " + relationship.getLabel());
+                }
+            });
+        } else if (choice.get() == renameBtn) {
+            TextInputDialog dialog = new TextInputDialog(relationship.getLabel());
+            dialog.setTitle("Rename Connection");
+            dialog.setHeaderText("Update label for this connection");
+            dialog.setContentText("New Label:");
+            styleDialog(dialog);
+            dialog.showAndWait().ifPresent(newLabel -> {
+                if (!newLabel.trim().isEmpty()) {
+                    relationship.setLabel(newLabel.toUpperCase());
+                    graphManager.updateView();
+                    System.out.println("Terminal: Relationship renamed to: " + newLabel);
+                }
+            });
+        }
     }
 
     private void handleEntitySelection(Entity entity) {

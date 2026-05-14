@@ -243,6 +243,24 @@ public class GraphManager {
         }
     }
 
+    /**
+     * Removes a relationship (edge) from the graph.
+     *
+     * @param relationship The relationship to remove.
+     */
+    public void removeRelationship(Relationship relationship) {
+        graph.edges().forEach(edge -> {
+            if (edge.element() == relationship) {
+                try {
+                    graph.removeEdge(edge);
+                } catch (Exception e) {
+                    System.err.println("Terminal: Error removing edge: " + e.getMessage());
+                }
+            }
+        });
+        updateView();
+    }
+
     public void toggleAutomaticLayout() {
         if (graphView != null) {
             isAutomaticLayout = !isAutomaticLayout;
