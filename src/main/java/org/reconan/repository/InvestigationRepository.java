@@ -118,4 +118,32 @@ public class InvestigationRepository {
         }
         return null;
     }
+
+    /**
+     * Updates an existing investigation.
+     *
+     * @param investigation The investigation with updated data.
+     * @return true if update was successful.
+     */
+    public boolean update(Investigation investigation) {
+        String sql = "UPDATE investigations SET name = ?, description = ?, updated_at = GETDATE() WHERE id = ?";
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            
+            pstmt.setString(1, investigation.getName());
+            pstmt.setString(2, investigation.getDescription());
+            pstmt.setInt(3, investigation.getId());
+            
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("SQL Server: Error updating investigation: " + e.getMessage());
+            return false;
+        } finally {
+            DatabaseConnection.close(null, pstmt, conn);
+        }
+    }
 }

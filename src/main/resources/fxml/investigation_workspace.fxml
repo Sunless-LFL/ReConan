@@ -19,7 +19,7 @@
           <top>
              <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="workspace-header" BorderPane.alignment="CENTER">
                 <children>
-                   <Label fx:id="investigationNameLabel" styleClass="workspace-title" text="Investigation: Untitled" />
+                   <Label fx:id="investigationNameLabel" onMouseClicked="#handleRenameInvestigation" styleClass="workspace-title-clickable" text="Investigation: Untitled" />
                    <Pane HBox.hgrow="ALWAYS" />
                    <Button mnemonicParsing="false" onAction="#handleBackToMenu" styleClass="action-button-secondary" text="Back to Menu" />
                 </children>

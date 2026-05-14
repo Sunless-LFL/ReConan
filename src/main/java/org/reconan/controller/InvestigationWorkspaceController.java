@@ -25,6 +25,7 @@ import org.reconan.model.Investigation;
 import org.reconan.model.Relationship;
 import org.reconan.repository.EntityRepository;
 import org.reconan.repository.RelationshipRepository;
+import org.reconan.repository.InvestigationRepository;
 import org.reconan.ui.ViewLoader;
 
 import java.io.File;
@@ -72,6 +73,7 @@ public class InvestigationWorkspaceController {
 
     private final EntityRepository entityRepository = new EntityRepository();
     private final RelationshipRepository relationshipRepository = new RelationshipRepository();
+    private final InvestigationRepository investigationRepository = new InvestigationRepository();
 
     @FXML
     public void initialize() {
@@ -429,6 +431,31 @@ public class InvestigationWorkspaceController {
     @FXML
     private void handleCloseZoom() {
         zoomOverlay.setVisible(false);
+    }
+
+    @FXML
+    private void handleRenameInvestigation() {
+        if (currentInvestigation == null) return;
+
+        TextInputDialog dialog = new TextInputDialog(currentInvestigation.getName());
+        dialog.setTitle("Rename Investigation");
+        dialog.setHeaderText("Current Name: " + currentInvestigation.getName());
+        dialog.setContentText("Enter New Name:");
+        styleDialog(dialog);
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newName -> {
+            if (!newName.trim().isEmpty()) {
+                currentInvestigation.setName(newName);
+                investigationNameLabel.setText("Investigation: " + newName);
+                
+                if (investigationRepository.update(currentInvestigation)) {
+                    System.out.println("Terminal: Investigation renamed to: " + newName);
+                } else {
+                    System.err.println("Terminal: Failed to update investigation name in DB.");
+                }
+            }
+        });
     }
 
     @FXML

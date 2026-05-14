@@ -391,3 +391,14 @@
 .action-button-delete:hover {
     -fx-background-color: rgba(255, 68, 68, 0.1);
 }
+
+.workspace-title-clickable {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0f0f0;
+    -fx-cursor: hand;
+}
+
+.workspace-title-clickable:hover {
+    -fx-text-fill: #b22222;
+}
