@@ -476,7 +476,7 @@ public class InvestigationWorkspaceController {
             if (!newName.trim().isEmpty()) {
                 currentInvestigation.setName(newName);
                 investigationNameLabel.setText("Investigation: " + newName);
-                
+
                 if (investigationRepository.update(currentInvestigation)) {
                     System.out.println("Terminal: Investigation renamed to: " + newName);
                 } else {
@@ -521,15 +521,13 @@ public class InvestigationWorkspaceController {
         if (currentInvestigation != null) {
             int invId = currentInvestigation.getId();
 
-            // 0. Clear relationships first to avoid FK constraint violations when deleting
-            // entities
-            relationshipRepository.deleteAll(invId);
-
             // 1. Save Entities and get ID Map (OldID -> NewID)
+            // Existing entities will be updated, new ones will be inserted.
             Collection<Entity> entities = graphManager.getEntities();
             Map<Integer, Integer> idMap = entityRepository.saveAll(invId, new ArrayList<>(entities));
 
             // 2. Update Relationship IDs using the Map
+            // This ensures relationships point to the correct DB IDs even if they were just created.
             Collection<Relationship> relationships = graphManager.getRelationships();
             for (Relationship rel : relationships) {
                 Integer newSourceId = idMap.get(rel.getSourceId());
@@ -541,7 +539,7 @@ public class InvestigationWorkspaceController {
                     rel.setTargetId(newTargetId);
             }
 
-            // 3. Save Relationships
+            // 3. Save Relationships (synchronization is handled inside the repository)
             relationshipRepository.saveAll(invId, new ArrayList<>(relationships));
 
             System.out.println("Terminal: Investigation saved: " + currentInvestigation.getName());
